@@ -1,54 +1,71 @@
-const faqs = [
-  {
-    q: "What format is the guide?",
-    a: "PDF. Works on any device — laptop, tablet, phone. Print it if you want. It's yours forever.",
-  },
-  {
-    q: "Is this beginner-friendly?",
-    a: "Yes. Every step shows the exact command to run. If you can open a terminal, you can follow this guide.",
-  },
-  {
-    q: "Do I need technical experience?",
-    a: "Basic command-line comfort helps. You should know how to open a terminal and run commands. Everything else is explained.",
-  },
-  {
-    q: "What platforms does it cover?",
-    a: "Windows (native and WSL2), macOS (Homebrew + launchd service), Docker (full docker-compose template), and Kali Linux (including VPS deployment with nginx and SSH hardening).",
-  },
-  {
-    q: "Is this a subscription?",
-    a: "No. One-time payment of $19.99. Download it, keep it, use it forever.",
-  },
-  {
-    q: "What is OpenClaw?",
-    a: "OpenClaw is a self-hosted AI gateway — your own private AI assistant that runs on your hardware, connects to your messaging apps, and never sends your data to third parties.",
-  },
-  {
-    q: "When do I get access?",
-    a: "Immediately after payment. You'll see a download button on the confirmation page. No waiting.",
-  },
-];
+"use client";
+
+import { useState } from "react";
+import { faqs } from "@/lib/content";
+import { FadeIn, StaggerContainer, StaggerItem } from "@/components/motion";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { HelpCircle, ChevronDown } from "lucide-react";
 
 export default function FAQ() {
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+
   return (
     <section className="py-24 px-4 bg-gray-950/50" id="faq">
       <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">
-            Common <span className="text-cyan-400">Questions</span>
-          </h2>
-        </div>
-        <div className="space-y-4">
-          {faqs.map((faq) => (
-            <div
-              key={faq.q}
-              className="bg-gray-900/40 border border-gray-800 rounded-xl p-6 hover:border-gray-700 transition-colors"
-            >
-              <h3 className="font-semibold text-white mb-2">{faq.q}</h3>
-              <p className="text-gray-400 text-sm leading-relaxed">{faq.a}</p>
-            </div>
+        <FadeIn>
+          <div className="text-center mb-16">
+            <Badge className="mb-4">
+              <HelpCircle className="w-3 h-3 mr-1" />
+              FAQ
+            </Badge>
+            <h2 className="text-4xl font-bold mb-4">
+              Common{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">
+                Questions
+              </span>
+            </h2>
+          </div>
+        </FadeIn>
+
+        <StaggerContainer className="space-y-3">
+          {faqs.map((faq, index) => (
+            <StaggerItem key={index}>
+              <Card
+                className={`border-gray-800 transition-all cursor-pointer ${
+                  openFaq === index ? "border-cyan-500/30" : "hover:border-gray-700"
+                }`}
+              >
+                <button
+                  onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                  className="w-full text-left"
+                >
+                  <CardContent className="p-5">
+                    <div className="flex items-start justify-between gap-4">
+                      <h3
+                        className={`font-semibold transition-colors ${
+                          openFaq === index ? "text-white" : "text-gray-300"
+                        }`}
+                      >
+                        {faq.question}
+                      </h3>
+                      <ChevronDown
+                        className={`w-5 h-5 text-gray-500 flex-shrink-0 transition-transform duration-200 ${
+                          openFaq === index ? "rotate-180" : ""
+                        }`}
+                      />
+                    </div>
+                    {openFaq === index && (
+                      <p className="mt-3 text-gray-400 text-sm leading-relaxed pr-8">
+                        {faq.answer}
+                      </p>
+                    )}
+                  </CardContent>
+                </button>
+              </Card>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </div>
     </section>
   );

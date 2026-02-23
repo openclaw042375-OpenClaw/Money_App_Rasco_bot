@@ -17,10 +17,10 @@ export async function POST() {
       },
     ],
     mode: "payment",
-    success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+    success_url: `${baseUrl}/thanks?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${baseUrl}`,
     metadata: {
-      product: "openclaw-deployment-guide",
+      product: "openclaw-super-guide",
     },
   });
 
