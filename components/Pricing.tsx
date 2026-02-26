@@ -8,11 +8,17 @@ import { Badge } from "@/components/ui/badge";
 import { Check, Zap } from "lucide-react";
 
 export default function Pricing() {
-  const hasCheckoutUrl = !!siteConfig.checkoutUrl;
-
-  const handleCheckout = () => {
-    if (siteConfig.checkoutUrl) {
-      window.location.href = siteConfig.checkoutUrl;
+  const handleCheckout = async () => {
+    try {
+      const res = await fetch('/api/checkout', { method: 'POST' });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert('Error: ' + (data.error || 'Unknown'));
+      }
+    } catch (error) {
+      alert('Network error');
     }
   };
 
@@ -70,20 +76,11 @@ export default function Pricing() {
               {/* CTA */}
               <Button
                 onClick={handleCheckout}
-                disabled={!hasCheckoutUrl}
                 size="lg"
-                className={`w-full text-lg py-6 ${
-                  !hasCheckoutUrl ? "opacity-50 cursor-not-allowed" : ""
-                }`}
+                className="w-full text-lg py-6"
               >
-                {hasCheckoutUrl ? `Buy Now — $${siteConfig.price}` : "Coming Soon"}
+                Buy Now — $${siteConfig.price}
               </Button>
-
-              {!hasCheckoutUrl && (
-                <p className="text-center text-gray-500 text-xs mt-4">
-                  Checkout URL not configured. Set NEXT_PUBLIC_CHECKOUT_URL to enable purchases.
-                </p>
-              )}
             </CardContent>
           </Card>
         </FadeIn>

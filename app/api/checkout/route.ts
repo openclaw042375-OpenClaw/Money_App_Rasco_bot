@@ -37,8 +37,8 @@ export async function POST(req: NextRequest) {
       line_items: [{
         price_data: { 
           currency: 'usd', 
-          product_data: { name: 'Digital God UGC Pack' }, 
-          unit_amount: 100 
+          product_data: { name: 'OpenClaw Super Guide' }, 
+          unit_amount: 1900 
         },
         quantity: 1,
       }],
