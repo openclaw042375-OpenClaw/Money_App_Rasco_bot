@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2026-01-28.clover",
-});
+function getStripe() {
+  const apiKey = process.env.STRIPE_SECRET_KEY;
+  if (!apiKey) {
+    throw new Error("STRIPE_SECRET_KEY is not set");
+  }
+  return new Stripe(apiKey, {
+    apiVersion: "2024-06-20",
+  });
+}
 
 export async function POST(req: NextRequest) {
+  const stripe = getStripe();
   const body = await req.text();
   const sig = req.headers.get("stripe-signature");
 
@@ -25,10 +32,12 @@ export async function POST(req: NextRequest) {
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
-    console.log(`✅ Payment completed for session: ${session.id}`);
+    console.log(`Payment completed for session: ${session.id}`);
     console.log(`Customer email: ${session.customer_details?.email}`);
     // Future: store session in DB, send email with download link
   }
 
   return NextResponse.json({ received: true });
 }
+
+export const dynamic = 'force-dynamic';

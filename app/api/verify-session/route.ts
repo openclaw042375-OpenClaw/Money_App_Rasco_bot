@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2026-01-28.clover",
-});
+function getStripe() {
+  const apiKey = process.env.STRIPE_SECRET_KEY;
+  if (!apiKey) {
+    throw new Error("STRIPE_SECRET_KEY is not set");
+  }
+  return new Stripe(apiKey, {
+    apiVersion: "2026-02-25.clover",
+  });
+}
 
 export async function GET(req: NextRequest) {
+  const stripe = getStripe();
   const { searchParams } = new URL(req.url);
   const sessionId = searchParams.get("session_id");
 
@@ -28,3 +35,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ valid: false });
   }
 }
+
+export const dynamic = 'force-dynamic';
