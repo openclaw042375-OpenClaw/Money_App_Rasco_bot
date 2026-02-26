@@ -8,7 +8,7 @@ export const siteConfig = {
     "The complete 12-module system to deploy, configure, and master OpenClaw AI on any platform — Windows, macOS, Docker, and Kali Linux.",
   url: process.env.NEXT_PUBLIC_BASE_URL || "https://openclaw.guide",
   ogImage: "/og-image.png",
-  price: Number(process.env.NEXT_PUBLIC_PRICE) || 39,
+  price: Number(process.env.NEXT_PUBLIC_PRICE) || 19,
   checkoutUrl: process.env.NEXT_PUBLIC_CHECKOUT_URL || "",
 };
 

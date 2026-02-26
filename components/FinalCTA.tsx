@@ -6,11 +6,17 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Download } from "lucide-react";
 
 export default function FinalCTA() {
-  const hasCheckoutUrl = !!siteConfig.checkoutUrl;
-
-  const handleCheckout = () => {
-    if (siteConfig.checkoutUrl) {
-      window.location.href = siteConfig.checkoutUrl;
+  const handleCheckout = async () => {
+    try {
+      const res = await fetch('/api/checkout', { method: 'POST' });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert('Error: ' + (data.error || 'Unknown'));
+      }
+    } catch (error) {
+      alert('Network error');
     }
   };
 
@@ -38,28 +44,17 @@ export default function FinalCTA() {
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Button
                   onClick={handleCheckout}
-                  disabled={!hasCheckoutUrl}
                   size="lg"
-                  className={`text-lg px-8 py-6 ${
-                    !hasCheckoutUrl ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
+                  className="text-lg px-8 py-6"
                 >
-                  {hasCheckoutUrl ? (
-                    <>
-                      <Download className="w-5 h-5 mr-2" />
-                      Get the Guide — ${siteConfig.price}
-                      <ArrowRight className="w-5 h-5 ml-2" />
-                    </>
-                  ) : (
-                    "Coming Soon"
-                  )}
+                  <Download className="w-5 h-5 mr-2" />
+                  Get the Guide — ${siteConfig.price}
+                  <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </div>
 
               <p className="mt-4 text-gray-600 text-sm">
-                {hasCheckoutUrl
-                  ? "Instant download · Lifetime access · Free updates"
-                  : "Set NEXT_PUBLIC_CHECKOUT_URL to enable purchases"}
+                Instant download · Lifetime access · Free updates
               </p>
             </div>
           </div>

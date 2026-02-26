@@ -6,16 +6,22 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
 export default function Hero() {
-  const hasCheckoutUrl = !!siteConfig.checkoutUrl;
-
-  const handleCheckout = () => {
-    if (siteConfig.checkoutUrl) {
-      window.location.href = siteConfig.checkoutUrl;
+  const handleCheckout = async () => {
+    try {
+      const res = await fetch('/api/checkout', { method: 'POST' });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert('Error: ' + (data.error || 'Unknown'));
+      }
+    } catch (error) {
+      alert('Network error');
     }
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 pt-16">
+    <section className="relative min-h-[600px] md:min-h-[700px] flex items-center justify-center overflow-hidden px-4 pt-16 pb-12">
       {/* Background glow effects */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-cyan-500/5 rounded-full blur-3xl" />
@@ -81,26 +87,27 @@ export default function Hero() {
           {/* CTA */}
           <Button
             onClick={handleCheckout}
-            disabled={!hasCheckoutUrl}
             size="lg"
-            className={`group text-lg px-10 py-6 ${
-              !hasCheckoutUrl ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+            className="group text-lg px-10 py-6"
           >
-            {hasCheckoutUrl ? (
-              <>
-                {heroContent.ctaText} —{" "}
-                <span className="font-mono">${siteConfig.price}</span>
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </>
-            ) : (
-              "Coming Soon"
-            )}
+            {heroContent.ctaText} —{" "}
+            <span className="font-mono">${siteConfig.price}</span>
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Button>
         </FadeIn>
 
         <FadeIn delay={0.6}>
           <p className="mt-4 text-gray-600 text-sm">{heroContent.ctaSubtext}</p>
+        </FadeIn>
+
+        {/* Scroll indicator */}
+        <FadeIn delay={0.7}>
+          <div className="mt-12 flex flex-col items-center gap-2 text-gray-600">
+            <span className="text-xs uppercase tracking-wider">Scroll to explore</span>
+            <svg className="w-6 h-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
         </FadeIn>
       </div>
     </section>
