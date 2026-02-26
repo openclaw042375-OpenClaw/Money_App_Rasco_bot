@@ -25,7 +25,7 @@ export default function Success() {
             size="lg"
             className="text-lg px-8 py-6 bg-emerald-600 hover:bg-emerald-700"
           >
-            <a href="/OpenClaw_Super_Guide.pdf" download>
+            <a href="/OpenClaw_Deployment_Guide_v2.0.pdf" download>
               <Download className="w-5 h-5 mr-2" />
               Download PDF Guide
             </a>
