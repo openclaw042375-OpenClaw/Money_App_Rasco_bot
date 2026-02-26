@@ -1,17 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
+import Stripe from 'stripe';
 
-const stripeLib = require('stripe');
-const stripe = stripeLib(process.env.STRIPE_SECRET_KEY || 'sk_test_dummy');
+function getStripe() {
+  const apiKey = process.env.STRIPE_SECRET_KEY;
+  if (!apiKey) {
+    throw new Error('STRIPE_SECRET_KEY is not set');
+  }
+  return new Stripe(apiKey, {
+    apiVersion: '2026-02-25.clover',
+  });
+}
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
+  const stripe = getStripe();
   const sig = req.headers.get('stripe-signature');
   
   if (sig && process.env.STRIPE_WEBHOOK_SECRET) {
     const body = await req.text();
     try {
-      const event = stripe.webhooks.constructEvent(body, process.env.STRIPE_WEBHOOK_SECRET);
+      const event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET);
       if (event.type === 'checkout.session.completed') {
-        console.log('Payment:', event.data.object.customer_email);
+        console.log('LIVE PAYMENT:', event.data.object.customer_email);
       }
       return NextResponse.json({ received: true });
     } catch (err: any) {
@@ -24,7 +35,11 @@ export async function POST(req: NextRequest) {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [{
-        price_data: { currency: 'usd', product_data: { name: 'Digital God UGC Pack' }, unit_amount: 100 },
+        price_data: { 
+          currency: 'usd', 
+          product_data: { name: 'Digital God UGC Pack' }, 
+          unit_amount: 100 
+        },
         quantity: 1,
       }],
       mode: 'payment',
