@@ -21,7 +21,7 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative min-h-[600px] md:min-h-[700px] flex items-center justify-center overflow-hidden px-4 pt-16 pb-12">
+    <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden px-4 pt-24 pb-20">
       {/* Background glow effects */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-cyan-500/5 rounded-full blur-3xl" />

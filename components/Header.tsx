@@ -18,11 +18,15 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const hasCheckoutUrl = !!siteConfig.checkoutUrl;
-
-  const handleCheckout = () => {
-    if (siteConfig.checkoutUrl) {
-      window.location.href = siteConfig.checkoutUrl;
+  const handleCheckout = async () => {
+    try {
+      const res = await fetch('/api/checkout', { method: 'POST' });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
     }
   };
 
@@ -76,18 +80,8 @@ export default function Header() {
 
           {/* CTA Button */}
           <div className="hidden md:block">
-            <Button
-              onClick={handleCheckout}
-              disabled={!hasCheckoutUrl}
-              className={!hasCheckoutUrl ? "opacity-50 cursor-not-allowed" : ""}
-            >
-              {hasCheckoutUrl ? (
-                <>
-                  Buy Now — ${siteConfig.price}
-                </>
-              ) : (
-                "Coming Soon"
-              )}
+            <Button onClick={handleCheckout}>
+              Buy Now — ${siteConfig.price}
             </Button>
           </div>
 
@@ -114,12 +108,8 @@ export default function Header() {
                   {link.label}
                 </a>
               ))}
-              <Button
-                onClick={handleCheckout}
-                disabled={!hasCheckoutUrl}
-                className="mt-2"
-              >
-                {hasCheckoutUrl ? `Buy Now — $${siteConfig.price}` : "Coming Soon"}
+              <Button onClick={handleCheckout} className="mt-2">
+                Buy Now — ${siteConfig.price}
               </Button>
             </nav>
           </div>
